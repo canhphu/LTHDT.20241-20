@@ -1,8 +1,4 @@
-package entity.board;
-
-import entity.gem.Gem;
-import entity.gem.SmallGem;
-import entity.gem.BigGem;
+package entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +23,11 @@ public class Square {
         return gemsInSquare.size();
     }
 
-    public void removeAllGem() {
+    public void removeAllGems() {
         gemsInSquare.clear();
     }
 
     public List<Gem> getGemInSquare() {
-        return gemInSquare;
+        return gemsInSquare;
     }
 }

@@ -1,9 +1,9 @@
-package entity.gem;
+package entity;
 
 public class Gem {
     protected int value;
 
-    public int Gem() {
+    public Gem(int value) {
         this.value = value;
     }
 
@@ -11,7 +11,7 @@ public class Gem {
         return value;
     }
 
-    public void setValue() {
+    public void setValue(int point) {
         this.value = point;
     }
 

@@ -1,12 +1,12 @@
-package entity.board;
+package entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Broad {
+public class Board {
     private List<Square> squareList = new ArrayList<>();
 
-    public Broad()
+    public Board()
     {
         for (int i = 0; i < 12; i++) {
             squareList.add(new Square(i));
@@ -19,5 +19,6 @@ public class Broad {
                 return square;
             }
         }
+                return null;
     }
 }
