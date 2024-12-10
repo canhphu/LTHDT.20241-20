@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Square {
     private int squareId;
-    private List<Gem> gemsInSquare= new ArrayList<>();
+    private List<Gem> gemsInSquare = new ArrayList<>();
 
     public Square(int squareId) {
         this.squareId = squareId;
