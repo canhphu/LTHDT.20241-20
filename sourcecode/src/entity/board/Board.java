@@ -13,8 +13,11 @@ public class Broad {
         }
     }
 
-    public List<Square> getSquareList() {
-        return squareList;
+    public Square getSquareById(int squareId) {
+        for (Square square : squareList) {
+            if (square.getSquareId() == squareId) {
+                return square;
+            }
+        }
     }
-
 }

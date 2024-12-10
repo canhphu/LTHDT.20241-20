@@ -1,22 +1,17 @@
 package entity.gem;
 
 public class Gem {
-    protected int locate;
     protected int value;
 
-    public int getLocate() {
-        return locate;
+    public int Gem() {
+        this.value = value;
     }
 
-    public void setLocate(int locate) {
-        this.locate = locate;
-    }
-
-    public int getPoint() {
+    public int getValue() {
         return value;
     }
 
-    public void setPoint(int point) {
+    public void setValue() {
         this.value = point;
     }
 

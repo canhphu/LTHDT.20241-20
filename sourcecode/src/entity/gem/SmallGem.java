@@ -1,9 +1,8 @@
 package entity.gem;
 
 public class SmallGem extends Gem{
-    public SmallGem(int locate)
-    {
-        this.locate = locate;
+    
+    public int SmallGem() {
         this.value = 1;
     }
 }

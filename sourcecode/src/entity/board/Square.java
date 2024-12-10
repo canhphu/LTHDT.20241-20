@@ -13,40 +13,25 @@ public class Square {
 
     public Square(int squareId) {
         this.squareId = squareId;
-        if(squareId == 0 || squareId == 6)
-        {
-            this.gemsInSquare.add(new BigGem(squareId));
-        }
-        else
-        {
-            this.gemsInSquare.add(new SmallGem(squareId));
-            this.gemsInSquare.add(new SmallGem(squareId));
-            this.gemsInSquare.add(new SmallGem(squareId));
-            this.gemsInSquare.add(new SmallGem(squareId));
-            this.gemsInSquare.add(new SmallGem(squareId));
-        }
     }
 
     public int getSquareId() {
         return squareId;
     }
 
-    public void setSquareId(int squareId) {
-        this.squareId = squareId;
-    }
-
-    public List<Gem> getGemsInSquare() {
-        return gemsInSquare;
-    }
-
-    public void setGemsInSquare(List<Gem> gemsInSquare) {
-        this.gemsInSquare = gemsInSquare;
-    }
-
-    public void gemDrop(Gem gem)
-    {
-        gem.setLocate(squareId);
+    public void addGem(Gem gem) {
         gemsInSquare.add(gem);
     }
 
+    public int getGemQuantity() {
+        return gemsInSquare.size();
+    }
+
+    public void removeAllGem() {
+        gemsInSquare.clear();
+    }
+
+    public List<Gem> getGemInSquare() {
+        return gemInSquare;
+    }
 }
