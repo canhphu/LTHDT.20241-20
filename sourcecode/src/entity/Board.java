@@ -6,8 +6,7 @@ import java.util.List;
 public class Board {
     private List<Square> squareList = new ArrayList<>();
 
-    public Board()
-    {
+    public Board() {
         for (int i = 0; i < 12; i++) {
             squareList.add(new Square(i));
         }
@@ -19,6 +18,9 @@ public class Board {
                 return square;
             }
         }
-                return null;
+        return null;
+    }
+    public List<Square> getSquareList() {
+        return squareList;
     }
 }
