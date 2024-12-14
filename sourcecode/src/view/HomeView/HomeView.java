@@ -9,8 +9,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class HomeView extends Application{
-    public static final double WIDTH = 1100;
-	public static final double HEIGHT = 700;
+    public static final double WIDTH = 800;
+	public static final double HEIGHT = 600;
 	
 	public static double width, height;
 	
@@ -48,7 +48,7 @@ public class HomeView extends Application{
 	    stage.show();
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
 		launch(args);
     }
 }

@@ -5,15 +5,15 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="200" prefWidth="324.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HomeController">
     <children>
-         <ImageView fitHeight="206.0" fitWidth="356.0" layoutX="-7.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="imageView" fitHeight="600.0" fitWidth="800.0" layoutY="58.0" nodeOrientation="INHERIT" preserveRatio="true">
             <image>
-               <Image url="@../../../../../../../HUST%20Dropbox/Phu%20Le/PC/Downloads/o-an-quan-00.jpg" />
+                <Image url="@../../../../../../../HUST%20Dropbox/Phu%20Le/PC/Downloads/o-an-quan-00.jpg" />
             </image>
-         </ImageView>
-         <Button fx:id="Playbtn" layoutX="145.0" layoutY="87.0" mnemonicParsing="false" text="Chơi" />
-         <Button fx:id="Guidebtn" layoutX="127.0" layoutY="120.0" mnemonicParsing="false" text="Hướng dẫn" />
-         <Button fx:id="Exitbtn" layoutX="142.0" layoutY="153.0" mnemonicParsing="false" text="Thoát" />
+        </ImageView>
+        <Button fx:id="Playbtn" layoutX="380.0" layoutY="358.0" text="Chơi" />
+        <Button fx:id="Guidebtn" layoutX="362.0" layoutY="394.0" text="Hướng dẫn" />
+        <Button fx:id="Exitbtn" layoutX="377.0" layoutY="430.0" text="Thoát" />
     </children>
 </AnchorPane>
