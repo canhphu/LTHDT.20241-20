@@ -8,10 +8,7 @@ public class Gem {
     }
 
     public int getValue() {
-        return value;
-    }
 
-    public void setValue(int value) {
-        this.value = value;
+        return value;
     }
 }

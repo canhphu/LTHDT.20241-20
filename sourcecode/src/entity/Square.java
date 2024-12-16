@@ -28,7 +28,8 @@ public class Square {
         return gems.size();
     }
 
-    public void removeAllGems() {
+    public void removeAllGems()
+    {
         gems.clear();
     }
 }

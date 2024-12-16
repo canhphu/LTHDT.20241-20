@@ -24,8 +24,11 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GameViewController {
+    private boolean run = false;
     private GameController gameController;
     @FXML
     private StackPane homePane; // StackPane cho màn Home
@@ -36,7 +39,9 @@ public class GameViewController {
    @FXML
     private StackPane insertNamePane; // màn nhập tên người chơi trước khi chơi
     @FXML
-    private StackPane endGamePane;
+    private StackPane menuGamePane;
+    @FXML
+    private StackPane endGamePane; // màn end Game
     //element cho home view
     @FXML
     private Button newGameButton;
@@ -55,6 +60,8 @@ public class GameViewController {
     @FXML
     private Button confirmNameButton;
     //element cho game view
+    @FXML
+    private Text timeText;
     @FXML
     private GridPane squareGrid;
     @FXML
@@ -109,22 +116,33 @@ public class GameViewController {
     private Button spreadGemButton;
     @FXML
     private StackPane pickSquare;
+    //element cho màn menu trong game
+    @FXML
+    private Button continuePlayButton;
+    @FXML
+    private Button exitGamePaneButton;
+
     ///element cho màn end Game
+    @FXML
+    private Text endText;
     @FXML
     private Label winnerLabel;
     @FXML
     private Label player1ScoreLabel;
     @FXML
     private Label player2ScoreLabel;
-
-    private StackPane lastSelectedSquare = null; // ô được chọn
-    private Button lastSelectedDirection = null;
-    private boolean clockwise;// chiều được chọn
+    private StackPane lastSelectedSquare ;// ô được chọn
+    private Button lastSelectedDirection ;
+    private Boolean clockwise;// chiều được chọn
     ////////
 //Controller cho giao diện
 ////////
     @FXML
     private void initialize() {
+        lastSelectedDirection=null;
+        lastSelectedSquare = null;
+        clockwise=null;
+        pickSquare.getChildren().clear();
         squares.add(0,square0);
         squares.add(1,square1);
         squares.add(2,square2);
@@ -137,6 +155,12 @@ public class GameViewController {
         squares.add(9,square9);
         squares.add(10,square10);
         squares.add(11,square11);
+        for (int i=0;i<squares.size();i++) {
+            squares.get(i).getChildren().removeIf(node -> node instanceof ImageView);
+            if(i%6!=0) squares.get(i).setStyle("-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black");
+
+        }
+
         if(newGameButton!=null) {
             // Event handler for "Game Mới"
             newGameButton.setOnAction(event -> startNewGame());
@@ -157,6 +181,7 @@ public class GameViewController {
         }
     }
     private void startNewGame() {
+        run = true;
         System.out.println("Bắt đầu game mới");
         homePane.setManaged(false);
         homePane.setVisible(false);
@@ -183,7 +208,6 @@ public class GameViewController {
     // Phương thức đóng cửa sổ hướng dẫn
     @FXML
     private void closeGuide() {
-        System.out.println("đhdhhdha");
         homePane.setVisible(true);
         homePane.setManaged(true);
         guidePane.setVisible(false);
@@ -192,6 +216,7 @@ public class GameViewController {
     //Controller cho InsertName view
     @FXML
     private void confirmInsertName(){
+
         insertNamePane.setVisible(false);
         insertNamePane.setManaged(false);
         initGameView();
@@ -203,31 +228,37 @@ public class GameViewController {
     //Controller cho PlayView
     @FXML
       public void initGameView(){
-        String player1Name = player1TextField.getText();
-        String player2Name = player2TextField.getText();
-        gameController = new GameController(player1Name, player2Name);
-        List<Square> squaresLogic = gameController.getBoard().getSquareList();
-        for(int i =0;i<squaresLogic.size();i++){
-            StackPane square = squares.get(i);
-            Square squareEntity = squaresLogic.get(i);
-            deleteAllGemImageInSquare(square);
-            if(i%6==0){
-                Image bigGemImage = new Image("/image/big_gem.png");
-                ImageView bigGemView = new ImageView(bigGemImage);
-                bigGemView.setFitHeight(40);
-                bigGemView.setFitWidth(40);
-                square.getChildren().add(bigGemView);
-            }else {
-                for (int j = 0; j < squareEntity.getGemsQuantity(); j++) {
-                    addGemImage(square,false);
+
+        if(run) {
+            initialize();
+            endGamePane.setManaged(false);
+            endGamePane.setVisible(false);
+            String player1Name = player1TextField.getText();
+            String player2Name = player2TextField.getText();
+            gameController = new GameController(player1Name, player2Name);
+
+            List<Square> squaresLogic = gameController.getBoard().getSquareList();
+            for (int i = 0; i < squaresLogic.size(); i++) {
+                StackPane square = squares.get(i);
+                Square squareEntity = squaresLogic.get(i);
+                deleteAllGemImageInSquare(square);
+                if (i % 6 == 0) {
+                    Image bigGemImage = new Image("/image/big_gem.png");
+                    ImageView bigGemView = new ImageView(bigGemImage);
+                    bigGemView.setFitHeight(40);
+                    bigGemView.setFitWidth(40);
+                    square.getChildren().add(bigGemView);
+                } else {
+                    for (int j = 0; j < squareEntity.getGemsQuantity(); j++) {
+                        addGemImage(square, 0);
+                    }
                 }
             }
+            currentPlayerText.setText("Player 1: " + player1Name);
+            namePlayer1.setText("Player1: " + gameController.getPlayer1().getName());
+            namePlayer2.setText("Player2: " + gameController.getPlayer2().getName());
+            updateScoreAndBorrowGem();
         }
-        currentPlayerText.setText("Player 1: " + player1Name);
-        namePlayer1.setText("Player1: "+gameController.getPlayer1().getName());
-        namePlayer2.setText("Player2: "+gameController.getPlayer2().getName());
-        updateScoreAndBorrowGem();
-
     }
     public void updateScoreAndBorrowGem(){
         scorePlayer1.setText("Score: "+gameController.getPlayer1().getScore());
@@ -243,12 +274,12 @@ public class GameViewController {
     }
 
     @FXML
-    public void addGemImage(StackPane square, boolean isQuan){
+    public void addGemImage(StackPane square, int type){
         Image smallGemImage = new Image("image/small_gem.png");
         ImageView gemImage = new ImageView(smallGemImage);
         gemImage.setFitHeight(20);
         gemImage.setFitWidth(20);
-        if(!isQuan) {
+        if(type==0) {
             double paneWidth = square.getWidth();
             double paneHeight = square.getHeight();
             double margin = 40;
@@ -259,18 +290,22 @@ public class GameViewController {
             gemImage.setTranslateX(randomX);
             gemImage.setTranslateY(randomY);
         }else {
-            double radiusX = 140; // Bán kính X của elip
-            double radiusY = 140; // Bán kính Y của elip
+            int baseAngle = 0,rootX=0,rootY=0;
+            if(type==1) {
+                baseAngle  = 100;
 
-            // Sinh góc ngẫu nhiên trong khoảng từ 90° đến 270° (bán nguyệt)
-            double angle = Math.toRadians(90 + Math.random() * 180);
-
-            // Sinh bán kính ngẫu nhiên trong khoảng từ 0 đến 1 (chuẩn hóa)
-            double normalizedRadius = Math.sqrt(Math.random()); // sqrt để phân bố đều trong diện tích
-
+                rootX = 70;
+            }
+            else if(type==2){
+                baseAngle = 280;
+                rootX = -70;
+            }
+            double radiusX = 140 -20; // Bán kính X của elip
+            double radiusY = 140 -20; // Bán kính Y của elip
+            double angle = Math.toRadians(baseAngle + Math.random() * 150);
             // Tính tọa độ Descartes
-            double randomX = normalizedRadius * Math.cos(angle) * radiusX;
-            double randomY = normalizedRadius * Math.sin(angle) * radiusY;
+            double randomX = rootX +Math.cos(angle) * radiusX;
+            double randomY =  rootY +Math.sin(angle) * radiusY;
 
             // Đặt tọa độ cho hình ảnh
             gemImage.setTranslateX(randomX);
@@ -280,23 +315,52 @@ public class GameViewController {
         square.getChildren().add(gemImage);
 
     }
-
     @FXML
     public void handleSquareClick(MouseEvent event) {
-        // Get the clicked square
-        StackPane selectedSquare = (StackPane) event.getSource();
+       if(run) {
+           lastSelectedDirection = null;
 
-        // Reset color of the previously selected square
-        if (lastSelectedSquare != null) {
-            resetSquareColor(lastSelectedSquare);
-        }
-        highlightSquare(selectedSquare);
+           if (lastSelectedSquare != null) {
+               resetSquareColor(lastSelectedSquare);
+               lastSelectedSquare = null;
+           }
+           double mouseX = event.getX();
+           double mouseY = event.getY();
 
-        lastSelectedSquare = selectedSquare;
+           // Lấy thông tin hàng và cột từ tọa độ chuột
+           int column = (int) (mouseX / 140);  // 50px là kích thước mỗi ô
+           int row = (int) (mouseY / 140);     // 50px là kích thước mỗi ô
+           StackPane[][] squareNames = {
+                   {square11, square10, square9, square8, square7},
+                   {square1, square2, square3, square4, square5}
+           };
+           if (row >= 0 && row < squareNames.length && column >= 0 && column < squareNames[row].length) {
+               lastSelectedSquare = squareNames[row][column];
+               String partAfterSquare = lastSelectedSquare.getId().substring("square".length()); // Lấy phần sau "square"
+               Square square = gameController.getBoard().getSquareById(Integer.parseInt(partAfterSquare));
+               System.out.println(square.getSquareId());
+               for (int i = 0; i < gameController.getCurrentPlayer().getPlayerSquares().size(); i++) {
+                   System.out.println("a" + gameController.getCurrentPlayer().getPlayerSquares().get(i).getSquareId());
+               }
+               if (square.getGemsQuantity() == 0 || !gameController.getCurrentPlayer().getPlayerSquares().contains(square)) {
+                   rightButton.setVisible(false);
+                   rightButton.setManaged(false);
+                   leftButton.setVisible(false);
+                   leftButton.setManaged(false);
+                   spreadGemButton.setManaged(false);
+                   spreadGemButton.setVisible(false);
+               } else {
+                   highlightSquare(lastSelectedSquare);
+                   // Show the buttons
+                   rightButton.setVisible(true);
+                   rightButton.setManaged(true);
+                   leftButton.setVisible(true);
+                   leftButton.setManaged(true);
+               }
+           }
 
-        // Show the buttons
-        rightButton.setVisible(true);
-        leftButton.setVisible(true);
+
+       }
     }
 
     private void highlightSquare(StackPane square) {
@@ -332,21 +396,24 @@ public class GameViewController {
 
     @FXML
     public void handleButtonDirectionClick(MouseEvent event) {
-        // Determine which button is clicked
-        Button clickedButton = (Button) event.getSource();
+        if(run) {
+            // Determine which button is clicked
+            Button clickedButton = (Button) event.getSource();
 
-        if (lastSelectedDirection != null) {
-            resetButtonColor(lastSelectedDirection);
+            if (lastSelectedDirection != null) {
+                resetButtonColor(lastSelectedDirection);
+            }
+
+            // Highlight the clicked button
+            highlightButton(clickedButton);
+
+            // Save the selected button for later
+            lastSelectedDirection = clickedButton;
+
+            // Make the "Spread Gem" button visible
+            spreadGemButton.setVisible(true);
+            spreadGemButton.setManaged(true);
         }
-
-        // Highlight the clicked button
-        highlightButton(clickedButton);
-
-        // Save the selected button for later
-        lastSelectedDirection = clickedButton;
-
-        // Make the "Spread Gem" button visible
-        spreadGemButton.setVisible(true);
     }
 
     private void highlightButton(Button button) {
@@ -361,76 +428,101 @@ public class GameViewController {
 
     @FXML
     public void handleSpreadGemButtonClick(MouseEvent event) {
-        Button clickedButton = (Button) event.getSource();
-        if(clickedButton == spreadGemButton){
-            highlightButton(clickedButton);
+        if(run) {
+            handleAfterTurn();
+            Button clickedButton = (Button) event.getSource();
+
+            if (clickedButton == spreadGemButton) {
+                highlightButton(clickedButton);
+            }
+            int pickSquareId = squares.indexOf(lastSelectedSquare);
+            if (pickSquareId <= 5 && pickSquareId >= 1)
+                clockwise = !Objects.equals(lastSelectedDirection.getId(), "leftButton");
+            else
+                clockwise = Objects.equals(lastSelectedDirection.getId(), "leftButton");
+            spreadGemButton.setVisible(false);
+            spreadGemButton.setManaged(false);
+            leftButton.setManaged(false);
+            rightButton.setManaged(false);
+            leftButton.setVisible(false);
+            rightButton.setVisible(false);
+            resetButtonColor(clickedButton);
+            resetButtonColor(lastSelectedDirection);
+            resetSquareColor(lastSelectedSquare);
+            spreadGem(pickSquareId, clockwise);
         }
-        int pickSquareId = squares.indexOf(lastSelectedSquare);
-        if (pickSquareId <= 5 && pickSquareId >= 1)
-            clockwise = !Objects.equals(lastSelectedDirection.getId(), "leftButton");
-        else
-            clockwise= Objects.equals(lastSelectedDirection.getId(), "leftButton");
-        for(StackPane square : squares){
-            System.out.println("bababaa"+square.getId());
-        }
-        spreadGem(pickSquareId, clockwise);
-        handleAfterTurn();
     }
     private void spreadGem(int pickSquareId, boolean clockwise ) {
-
-        pickSquareAnimation();
-        // Sử dụng Timeline để đợi 2 giây trước khi thực hiện spreadGemsAnimation
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(2), event -> {
-                    List<Integer> spreadSquareId;
-                    spreadSquareId = gameController.spreadGems(pickSquareId, clockwise);
-                    spreadGemsAnimation(spreadSquareId);
-
-                })
-        );
-        timeline.play();
-
+         if(run) {
+             pickSquareAnimation(() -> {
+                 {
+                     List<Integer> spreadSquareId;
+                     spreadSquareId = gameController.spreadGems(pickSquareId, clockwise);
+                     spreadGemsAnimation(spreadSquareId, () -> {
+                         handleAfterTurn();
+                         if (lastSelectedSquare != null)
+                             resetSquareColor(lastSelectedSquare);
+                         if (lastSelectedDirection != null)
+                             resetButtonColor(lastSelectedDirection);
+                     });
+                 }
+             });
+         }
     }
-    public void pickSquareAnimation(){
-        // Lấy tất cả các ImageView con từ lastSelectedSquare
-        List<TranslateTransition> transitions = new ArrayList<>();
 
+    public void pickSquareAnimation(Runnable onFinished) {
+        // Tạo một Pane mới để chứa các ảnh trong hoạt ảnh
+        StackPane movingPane = new StackPane();
+        // Thêm movingPane vào vào cây giao diện người dùng
+        gamePane.getChildren().add(movingPane);
+        movingPane.toFront();
+        // Lấy tất cả các ImageView con từ lastSelectedSquare
         for (var child : new ArrayList<>(lastSelectedSquare.getChildren())) {
             if (child instanceof ImageView) {
                 ImageView imageView = (ImageView) child;
-                imageView.toFront();
-                // Tạo hoạt ảnh cho từng ImageView
-                TranslateTransition transition = new TranslateTransition(Duration.seconds(1), imageView);
-
-                // Lấy vị trí tuyệt đối của pickSquare và lastSelectedSquare trong scene
-                double deltaX = pickSquare.localToScene(pickSquare.getBoundsInLocal()).getMinX() - lastSelectedSquare.localToScene(lastSelectedSquare.getBoundsInLocal()).getMinX();
-                double deltaY = pickSquare.localToScene(pickSquare.getBoundsInLocal()).getMinY() - lastSelectedSquare.localToScene(lastSelectedSquare.getBoundsInLocal()).getMinY();
-
-                // Set chuyển động bay (di chuyển theo vector từ pan1 đến pan2)
-                transition.setToX(deltaX);
-                transition.setToY(deltaY);
-
-                // Lưu vị trí của các viên đá khi chúng đến đích (pickSquare)
-                transition.setOnFinished(event -> {
-                    addGemImage(pickSquare,false);  // Thêm viên đá vào pickSquare
-                });
-
-                // Thêm hoạt ảnh vào danh sách để đồng bộ hóa
-                transitions.add(transition);
+                // Thêm từng ImageView vào movingPane
+                movingPane.getChildren().add(imageView);
             }
         }
-        // Chạy tất cả hoạt ảnh cùng lúc
-        ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(transitions);
-        parallelTransition.play();
-        parallelTransition.setOnFinished(event -> {
-            parallelTransition.stop();  // Dừng và xóa hoạt ảnh khỏi parallelTransition
 
+        Bounds lastSelectedBounds = lastSelectedSquare.localToScene(lastSelectedSquare.getBoundsInLocal());
+        Bounds pickSquareBounds = pickSquare.localToScene(pickSquare.getBoundsInLocal());
+
+// Tính toán khoảng cách dịch chuyển (deltaX, deltaY) từ lastSelectedSquare đến pickSquare
+        double deltaX = pickSquareBounds.getCenterX() - lastSelectedBounds.getCenterX();
+        double deltaY = pickSquareBounds.getCenterY() - lastSelectedBounds.getCenterY();
+
+// Đặt vị trí ban đầu của movingPane tại lastSelectedSquare (chú ý không trừ gamePane's layoutX và layoutY)
+        movingPane.setLayoutX(lastSelectedBounds.getCenterX());
+        movingPane.setLayoutY(lastSelectedBounds.getCenterY());
+
+// Tạo hoạt ảnh cho movingPane để di chuyển đến vị trí của pickSquare
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(1), movingPane);
+        transition.setToX(deltaX);
+        transition.setToY(deltaY);
+
+        // Lưu hoạt ảnh hoàn thành
+        transition.setOnFinished(event -> {
+            // Khi hoạt ảnh kết thúc, di chuyển ảnh vào pickSquare
+            for (var child : movingPane.getChildren()) {
+                if (child instanceof ImageView) {
+                    addGemImage(pickSquare, 0);  // Thêm viên đá vào pickSquare
+                }
+            }
+            // Xóa movingPane khỏi cây giao diện người dùng
+            gamePane.getChildren().remove(movingPane);
+
+            // Sau khi hoàn thành, gọi hàm onFinished
+            onFinished.run();
         });
-    }
-    public void spreadGemsAnimation(List<Integer> targetSquareIds) {
-        // Tạo danh sách các ImageView từ lastSelectedSquareSy
 
+        // Chạy hoạt ảnh di chuyển pane
+        transition.play();
+    }
+
+    public void spreadGemsAnimation(List<Integer> targetSquareIds,Runnable onFinished) {
+        // Tạo danh sách các ImageView từ lastSelectedSquareSy
+    if(run) {
         List<ImageView> gemsToMove = new ArrayList<>();
         for (var child : pickSquare.getChildren()) {
             if (child instanceof ImageView) {
@@ -439,69 +531,84 @@ public class GameViewController {
                 gemsToMove.add(imageView);
             }
         }
-        System.out.println("kakakakaka"+gemsToMove.size());
         // Gọi hàm đệ quy để xử lý từng viên đá với độ trễ
-        moveGemsRecursively(gemsToMove, targetSquareIds, 0);
+        moveGemsRecursively(gemsToMove, targetSquareIds, 0, onFinished);
+
+    }
     }
 
-    private void moveGemsRecursively(List<ImageView> gemsToMove, List<Integer> targetSquareIds, int index) {
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(400 ), event -> {
-        if (index >= gemsToMove.size()) {
-            int currentIndex = targetSquareIds.getLast();
-            int nextLastIndex = gameController.getNextSquareIndex(currentIndex, clockwise);
-            int response = gameController.handleNextEndSquare(nextLastIndex,clockwise);
-            if(response == 0){
-                int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
-                squares.get(nextTwoLastIndex).getChildren().clear();
-                updateScoreAndBorrowGem();
-            }else {
-                lastSelectedSquare = squares.get(nextLastIndex);
-                spreadGem(nextLastIndex,clockwise);
+    private void moveGemsRecursively(List<ImageView> gemsToMove, List<Integer> targetSquareIds, int index, Runnable onFinished) {
 
-            }
-            return; // Thoát khi đã xử lý hết các viên đá
+        if(run) {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(400), event -> {
+                        if (index >= gemsToMove.size()) {
+                            int currentIndex = targetSquareIds.getLast();
+                            int nextLastIndex = gameController.getNextSquareIndex(currentIndex, clockwise);
+                            int response = gameController.handleNextEndSquare(nextLastIndex, clockwise);
+                            if (response == 0) {
+                                int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
+                                squares.get(nextTwoLastIndex).getChildren().removeIf(node -> node instanceof ImageView);
+                                updateScoreAndBorrowGem();
+                            } else if (response == 1) {
+                                lastSelectedSquare = squares.get(nextLastIndex);
+                                spreadGem(nextLastIndex, clockwise);
+
+                            } else {
+                                updateScoreAndBorrowGem();
+                            }
+                            onFinished.run();
+                            return; // Thoát khi đã xử lý hết các viên đá
+                        }
+
+                        ImageView gem = gemsToMove.get(index);
+                        int targetSquareId = targetSquareIds.get(index);  // Lấy ID ô đích tương ứng
+                        StackPane targetSquare = squares.get(targetSquareId);
+
+                        // Tạo hoạt ảnh di chuyển cho viên đá
+                        TranslateTransition transition = new TranslateTransition(Duration.seconds(1), gem);
+
+                        // Lấy tọa độ của pickSquare và targetSquare trong hệ tọa độ của Scene
+                        Bounds pickBounds = pickSquare.localToScene(pickSquare.getBoundsInLocal());
+                        Bounds targetBounds = targetSquare.localToScene(targetSquare.getBoundsInLocal());
+
+                        // Tính khoảng cách delta giữa pickSquare và targetSquare
+                        double deltaX = targetBounds.getCenterX() - pickBounds.getCenterX();
+                        double deltaY = targetBounds.getCenterY() - pickBounds.getCenterY();
+
+                        // Set chuyển động (di chuyển gem từ vị trí cũ đến vị trí mới trong Parent)
+                        transition.setByX(deltaX);
+                        transition.setByY(deltaY);
+
+                        // Khi hoạt ảnh hoàn thành, xử lý xóa và thêm viên đá vào ô đích
+                        transition.setOnFinished(event1 -> {
+                            transition.stop();
+                            pickSquare.getChildren().removeFirst();
+                            if (targetSquare == square0) {
+                                addGemImage(targetSquare, 1);
+                            } else if (targetSquare == square6) {
+                                addGemImage(targetSquare, 2);
+                            } else {
+                                addGemImage(targetSquare, 0);
+                            }
+                            // Dừng 2 giây trước khi thực hiện lần lặp tiếp theo
+                            PauseTransition pause = new PauseTransition(Duration.seconds(0.6));
+                            pause.setOnFinished(e -> moveGemsRecursively(gemsToMove, targetSquareIds, index + 1, onFinished));
+                            pause.play();
+                        });
+                        if(run) transition.play(); // Bắt đầu hoạt ảnh
+                    }));
+            timeline.play();
         }
-
-        ImageView gem = gemsToMove.get(index);
-        int targetSquareId = targetSquareIds.get(index);  // Lấy ID ô đích tương ứng
-        StackPane targetSquare = squares.get(targetSquareId);
-
-        // Tạo hoạt ảnh di chuyển cho viên đá
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(1), gem);
-
-        // Lấy tọa độ của pickSquare và targetSquare trong hệ tọa độ của Scene
-        Bounds pickBounds = pickSquare.localToScene(pickSquare.getBoundsInLocal());
-        Bounds targetBounds = targetSquare.localToScene(targetSquare.getBoundsInLocal());
-
-        // Tính khoảng cách delta giữa pickSquare và targetSquare
-        double deltaX = targetBounds.getMinX() - pickBounds.getMinX();
-        double deltaY = targetBounds.getMinY() - pickBounds.getMinY();
-
-        // Set chuyển động (di chuyển gem từ vị trí cũ đến vị trí mới trong Parent)
-        transition.setByX(deltaX);
-        transition.setByY(deltaY);
-
-        // Khi hoạt ảnh hoàn thành, xử lý xóa và thêm viên đá vào ô đích
-        transition.setOnFinished(event1 -> {
-            transition.stop();
-            pickSquare.getChildren().removeFirst();
-            // Xóa viên đá khỏi pickSquare
-            addGemImage(targetSquare,targetSquareId%6==0);
-            // Dừng 2 giây trước khi thực hiện lần lặp tiếp theo
-            PauseTransition pause = new PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(e -> moveGemsRecursively(gemsToMove, targetSquareIds, index + 1));
-            pause.play();
-        });
-
-        transition.play(); // Bắt đầu hoạt ảnh
-    }));
-    timeline.play();
     }
     public void handleAfterTurn() {
-        if(gameController.isGameOver())  endGame();
+        if(gameController.isGameOver())  {
+            endText.setText("2 ô quan đã trống! Trò chơi kết thúc!\n Kết quả:\n");
+            endGame();
+        }
         switch (gameController.handleRefillGems()){
             case 2:
+                endText.setText("Đối phương không đủ đá cho mượn! Trò chơi kết thúc!\n Kết quả:\n ");
                 endGame();
                 break;
             case 1:
@@ -515,24 +622,47 @@ public class GameViewController {
     public void refillGems( Player currentPlayer) {
         if(currentPlayer.getId()==1){
             for(int i=1;i<=5;i++){
-                addGemImage(squares.get(i),false);
+                addGemImage(squares.get(i),0);
             }
         }else {
             for(int i=7;i<=11;i++){
-                addGemImage(squares.get(i),false);
+                addGemImage(squares.get(i),0);
             }
         }
         updateScoreAndBorrowGem();
     }
 
-
+///////////////////////////////////////////
+///Controller cho màn menu trong game
+//////////////////////////////////////////
+@FXML
+    public void handleMenuButton(MouseEvent event){
+        menuGamePane.setVisible(true);
+        menuGamePane.setManaged(true);
+    }
+@FXML
+    public void handleContinueButton(MouseEvent event){
+        menuGamePane.setVisible(false);
+        menuGamePane.setManaged(false);
+    }
+@FXML
+    public void handleExitGameButton(MouseEvent event){
+        gamePane.setManaged(false);
+        gamePane.setVisible(false);
+        menuGamePane.setVisible(false);
+        menuGamePane.setManaged(false);
+        homePane.setManaged(true);
+        homePane.setVisible(true);
+        run = false;
+    }
     ////////
 //Controller cho màn endGame
 ////////
    @FXML
     public void endGame(){
-        gamePane.setVisible(false);
+        gameController.endGame();
         endGamePane.setVisible(true);
+        endGamePane.setManaged(true);
         player1ScoreLabel.setText("Điểm của player1: "+gameController.getPlayer1().getScore());
         player2ScoreLabel.setText("Điểm của player2: "+gameController.getPlayer2().getScore());
         if(gameController.getPlayer1().getScore()>gameController.getPlayer2().getScore()){
@@ -545,8 +675,18 @@ public class GameViewController {
                 winnerLabel.setText("Hòa");
             }
         }
-
+        run =false;
    }
+   @FXML
+    public void exitEndGame(){
+        gamePane.setVisible(false);
+        gamePane.setManaged(false);
+        endGamePane.setVisible(false);
+        endGamePane.setManaged(false);
+        homePane.setVisible(true);
+        homePane.setManaged(true);
+        run=false;
+    }
 }
 
 

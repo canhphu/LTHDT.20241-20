@@ -32,15 +32,20 @@ public class Player {
     public int getBorrowGems() {
         return borrowGems;
     }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public List<Square> getPlayerSquares() {
+        return playerSquares;
+    }
     // Phương thức khác
 
     public void increaseBorrowGem(int value) {
         this.borrowGems +=value;
     }
 
-    public void addScoreGems(List<Gem> gems) {
-        scoreGems.addAll(gems);
-    }
     //Đếm số small Gem trong số gem mà player ăn được
     public int checkScoreGems(){
         int count =0;
@@ -62,14 +67,7 @@ public class Player {
         this.score -= 5;
         this.scoreGems.removeIf(gem -> gem.getValue()==1&& scoreGems.indexOf(gem)<5);
     }
-    public Integer pickSquare(int squareId){
-        for(Square square : playerSquares){
-            if(square.getSquareId()==squareId){
-                return square.getGemsQuantity();
-            }
-        }
-        return null;
-    }
+
     public void refillPlayerSquares(){
         for(Square square : playerSquares){
             square.addGem(new SmallGem());

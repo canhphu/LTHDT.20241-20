@@ -14,18 +14,18 @@ public class GameController {
     private final Player player1;
     private final Player player2;
     private final Board board;
-    private Player currentPlayer; //true cho player1, false cho player2
-    private Integer currentIndex;
+    private Player currentPlayer;
     public GameController(String player1Name, String player2Name) {
         Board board = new Board();
-        List<Square> player1Square = board.getSquareList().subList(1,5);
-        List<Square> player2Square = board.getSquareList().subList(7,11);
+        List<Square> player1Square = board.getSquareList().subList(1,6);
+        List<Square> player2Square = board.getSquareList().subList(7,12);
         Player player1 = new Player(1,player1Name,player1Square);
         Player player2 = new Player(2,player2Name,player2Square);
         this.player1 = player1;
         this.player2 = player2;
         this.board = board;
-        this.currentPlayer = player1; // player1 bắt đầu trước
+        this.currentPlayer = player1;
+        // player1 bắt đầu trước
     }
 
     public Player getPlayer1() {
@@ -71,21 +71,7 @@ public class GameController {
         }
         else  return 0;
     }
-    public void takeTurn(int pickSquareId, boolean clockwise) {
-        if(isGameOver()) return;
-        System.out.println("Lượt của " + currentPlayer.getName());
-        handleRefillGems();
-        if(currentPlayer.pickSquare(pickSquareId)==null){
-            System.out.println("Không phải ô thuộc sở hữu người chơi");
-        }else{
-            if(currentPlayer.pickSquare(pickSquareId)==0){
-                System.out.println("Ô không có đá");
-            }
-            else {
-                spreadGems(pickSquareId,clockwise);
-            }
-        }
-    }
+
     public List<Integer> spreadGems(int pickSquareId, boolean clockwise) {
 
         Square pickSquare = board.getSquareList().get(pickSquareId);
@@ -118,7 +104,7 @@ public class GameController {
             if(nextEndIndex%6==0)
             {
                 switchTurn();
-                return 0;
+                return 2;
             }
             else {
                 return 1;
@@ -128,7 +114,7 @@ public class GameController {
             Square nextTwoEndSquare = board.getSquareById(nextTwoEndSquareIndex);
             if(nextTwoEndSquare.getGemsQuantity()==0){
                 switchTurn();
-                return 0;
+                return 2;
             }
             else {
                 currentPlayer.increaseScore(nextTwoEndSquare.getGems());
@@ -144,6 +130,10 @@ public class GameController {
     }
 
     public void endGame() {
+        int playerScore = player1.getScore();
+        player1.setScore(playerScore+player1.getAllGemInPlayerSquares()-player1.getBorrowGems());
+        playerScore = player2.getScore();
+        player2.setScore(playerScore+player2.getAllGemInPlayerSquares()-player2.getBorrowGems());
         System.out.println("Game Over!");
         System.out.println("Player 1: " + player1.getScore());
         System.out.println("Player 2: " + player2.getScore());
