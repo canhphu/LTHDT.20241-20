@@ -1,4 +1,5 @@
 package entity;
+
 import java.util.List;
 
 public class Player {
@@ -117,5 +118,28 @@ public class Player {
         for (Square square : playerSquares) {
             square.addGem(new Gem(1));
         }
+    }
+
+    public int spreadGem(int pickedSquareId, int gemsPickedUp, int direction, Board board) {
+        Square currentSquare = board.getSquareById(pickedSquareId);
+        int currentSquareId = pickedSquareId;
+
+        while (gemsPickedUp > 0) {
+            currentSquare.addGem(new SmallGem(1)); // Rải 1 gem vào ô hiện tại
+            gemsPickedUp--;
+
+            // Tính ô tiếp theo dựa vào hướng
+            currentSquareId = (currentSquareId + direction + board.getSquareList().size()) % board.getSquareList().size();
+            currentSquare = board.getSquareById(currentSquareId);
+
+            // Kiểm tra ô tiếp theo
+            if (currentSquare.getGemQuantity() > 0) {
+                continue; // Nếu ô tiếp theo có gem, tiếp tục rải
+            } else {
+                // Nếu ô tiếp theo trống
+                break; // Kết thúc việc rải gem
+            }
+        }
+        return currentSquareId; // Trả về ô cuối cùng đã rải
     }
 }
