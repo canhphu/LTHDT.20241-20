@@ -1,18 +1,14 @@
-package entity;
+package src.entity;
 
 public class Gem {
-    protected int value;
+    private int value; // Giá trị của viên gem (1 cho gem dân, 5 cho gem quan)
 
     public Gem(int value) {
         this.value = value;
     }
 
     public int getValue() {
+
         return value;
     }
-
-    public void setValue(int point) {
-        this.value = point;
-    }
-
 }

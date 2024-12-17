@@ -1,145 +1,84 @@
-package entity;
-
+package src.entity;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private int playerId;
-    private String playerName;
-    private List<Square> playerSquares;
+    private final int id;
+    private final String name;
     private int score;
+    private final List<Square> playerSquares; // Các ô của người chơi (Player 1: 0-4, Player 2: 5-9)
     private List<Gem> scoreGems;
-    private int borrowGemCount; 
-
-    public Player(int playerId, String playerName, List<Square> playerSquares) {
-        this.playerId = playerId;
-        this.playerName = playerName;
-        this.playerSquares = playerSquares;
+    private int borrowGems ;
+    public Player(int id,String name,List<Square> playerSquares) {
+        this.id = id;
+        this.name = name;
         this.score = 0;
-        this.borrowGemCount = 0;
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public List<Square> getPlayerSquares() {
-        return playerSquares;
-    }
-
-    public void setPlayerSquares(List<Square> playerSquares) {
         this.playerSquares = playerSquares;
+        this.borrowGems = 0;
+        this.scoreGems = new ArrayList<>();
+    }
+    //Getter and Setter
+
+    public int getId() {
+        return id;
     }
 
+    public String getName() {
+        return name;
+    }
     public int getScore() {
         return score;
+    }
+    public int getBorrowGems() {
+        return borrowGems;
     }
 
     public void setScore(int score) {
         this.score = score;
     }
 
-    public List<Gem> getScoreGems() {
-        return scoreGems;
+    public List<Square> getPlayerSquares() {
+        return playerSquares;
+    }
+    // Phương thức khác
+
+    public void increaseBorrowGem(int value) {
+        this.borrowGems +=value;
     }
 
-    public void setScoreGems(List<Gem> scoreGems) {
-        this.scoreGems = scoreGems;
-    }
-
-    public int getBorrowGemCount() {
-        return borrowGemCount;
-    }
-
-    public void setBorrowGemCount(int borrowGemCount) {
-        this.borrowGemCount = borrowGemCount;
-    }
-
-    public int pickSquare(int squareId) {
-        for (Square square : playerSquares) {
-            if (square.getSquareId() == squareId) {
-                int gemsInSquare = square.getGemQuantity();
-                square.removeAllGems();
-                return gemsInSquare;
-            }
+    //Đếm số small Gem trong số gem mà player ăn được
+    public int checkScoreGems(){
+        int count =0;
+        if(scoreGems.isEmpty()){
+            return count;
         }
-        return 0; 
+        for(Gem gem : scoreGems){
+            if(gem.getValue()==1) count++;
+        }
+        return count;
+    }
+    public void increaseScore(List<Gem> scoreGems) {
+        for(Gem gem : scoreGems){
+            this.score+=gem.getValue();
+        }
+        this.scoreGems.addAll(scoreGems);
+    }
+    public void handleScoreForRefill() {
+        this.score -= 5;
+        this.scoreGems.removeIf(gem -> gem.getValue()==1&& scoreGems.indexOf(gem)<5);
     }
 
+    public void refillPlayerSquares(){
+        for(Square square : playerSquares){
+            square.addGem(new SmallGem());
+        }
+    }
     public int getAllGemInPlayerSquares() {
         int totalGems = 0;
         for (Square square : playerSquares) {
-            totalGems += square.getGemQuantity();
+            totalGems += square.getGemsQuantity(); // Lấy số lượng gem trong mỗi ô và cộng dồn
         }
         return totalGems;
     }
 
-    public void increaseBorrowGem(int value) {
-        this.borrowGemCount += value;
-    }
-
-    public void addScoreGems(List<Gem> gems) {
-        if (scoreGems != null) {
-            scoreGems.addAll(gems);
-        } else {
-            scoreGems = gems;
-        }
-        for (Gem gem : gems) {
-            this.score += gem.getValue();
-        }
-    }
-
-    public int checkScoreGems() {
-        int gemScore = 0;
-        if (scoreGems != null) {
-            for (Gem gem : scoreGems) {
-                gemScore += gem.getValue();
-            }
-        }
-        return gemScore;
-    }
-
-    public void calculateScore(int points) {
-        this.score += points;
-    }
-
-    public void refillPlayerSquares() {
-        for (Square square : playerSquares) {
-            square.addGem(new Gem(1));
-        }
-    }
-
-    public int spreadGem(int pickedSquareId, int gemsPickedUp, int direction, Board board) {
-        Square currentSquare = board.getSquareById(pickedSquareId);
-        int currentSquareId = pickedSquareId;
-
-        while (gemsPickedUp > 0) {
-            currentSquare.addGem(new SmallGem(1)); // Rải 1 gem vào ô hiện tại
-            gemsPickedUp--;
-
-            // Tính ô tiếp theo dựa vào hướng
-            currentSquareId = (currentSquareId + direction + board.getSquareList().size()) % board.getSquareList().size();
-            currentSquare = board.getSquareById(currentSquareId);
-
-            // Kiểm tra ô tiếp theo
-            if (currentSquare.getGemQuantity() > 0) {
-                continue; // Nếu ô tiếp theo có gem, tiếp tục rải
-            } else {
-                // Nếu ô tiếp theo trống
-                break; // Kết thúc việc rải gem
-            }
-        }
-        return currentSquareId; // Trả về ô cuối cùng đã rải
-    }
 }
