@@ -583,7 +583,7 @@ public class GameViewController {
                         // Khi hoạt ảnh hoàn thành, xử lý xóa và thêm viên đá vào ô đích
                         transition.setOnFinished(event1 -> {
                             transition.stop();
-                            pickSquare.getChildren().removeFirst();
+                            if(pickSquare.getChildren()!=null) pickSquare.getChildren().removeFirst();
                             if (targetSquare == square0) {
                                 addGemImage(targetSquare, 1);
                             } else if (targetSquare == square6) {
