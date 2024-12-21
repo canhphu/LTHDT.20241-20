@@ -5,7 +5,10 @@ import src.entity.Player;
 import src.entity.Square;
 import javafx.animation.*;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
@@ -19,8 +22,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,10 +35,6 @@ import java.util.concurrent.Executors;
 public class GameViewController {
     private boolean run = false;
     private GameController gameController;
-    @FXML
-    private StackPane homePane; // StackPane cho màn Home
-    @FXML
-    private StackPane guidePane; // StackPane cho màn Hướng Dẫn
     @FXML
     private AnchorPane gamePane; //AnchorPane cho màn chơi
    @FXML
@@ -45,13 +46,6 @@ public class GameViewController {
     //element cho home view
     @FXML
     private Button newGameButton;
-    @FXML
-    private Button guideButton;
-    @FXML
-    private Button exitButton;
-    @FXML
-    //element cho guide view
-    private Button guideCloseButton;
     //element cho insert name view
     @FXML
     private TextField player1TextField;
@@ -161,62 +155,15 @@ public class GameViewController {
 
         }
 
-        if(newGameButton!=null) {
-            // Event handler for "Game Mới"
-            newGameButton.setOnAction(event -> startNewGame());
-        }
-        if(guideButton!=null) {
-            // Event handler for "Hướng Dẫn"
-            guideButton.setOnAction(event -> showGuide());
-        }
-        if(exitButton!=null) {
-            // Event handler for "Thoát"
-            exitButton.setOnAction(event -> exitGame());
-        }
-        if(guideCloseButton!=null) {
-            guideCloseButton.setOnAction(event -> closeGuide());
-        }
         if(confirmNameButton!=null) {
             confirmNameButton.setOnAction(event -> confirmInsertName() );
         }
     }
-    private void startNewGame() {
-        run = true;
-        System.out.println("Bắt đầu game mới");
-        homePane.setManaged(false);
-        homePane.setVisible(false);
-        insertNamePane.setVisible(true);
-        insertNamePane.setManaged(true);
-    }
 
-    private void showGuide() {
-        System.out.println("Hiển thị hướng dẫn");
-        homePane.setVisible(false);
-        homePane.setManaged(false);
-        guidePane.setVisible(true);
-        guidePane.setManaged(true);
-    }
-
-    private void exitGame() {
-        System.out.println("Thoát game");
-        // Thoát ứng dụng hoặc quay lại màn hình chính.
-        System.exit(0);
-    }
-
-
-    //Controller cho GuideView
-    // Phương thức đóng cửa sổ hướng dẫn
-    @FXML
-    private void closeGuide() {
-        homePane.setVisible(true);
-        homePane.setManaged(true);
-        guidePane.setVisible(false);
-        guidePane.setManaged(false);
-    }
     //Controller cho InsertName view
     @FXML
     private void confirmInsertName(){
-
+        run = true;
         insertNamePane.setVisible(false);
         insertNamePane.setManaged(false);
         initGameView();
@@ -651,8 +598,7 @@ public class GameViewController {
         gamePane.setVisible(false);
         menuGamePane.setVisible(false);
         menuGamePane.setManaged(false);
-        homePane.setManaged(true);
-        homePane.setVisible(true);
+        loadGameView();
         run = false;
     }
     ////////
@@ -683,9 +629,21 @@ public class GameViewController {
         gamePane.setManaged(false);
         endGamePane.setVisible(false);
         endGamePane.setManaged(false);
-        homePane.setVisible(true);
-        homePane.setManaged(true);
+        loadGameView();
         run=false;
+    }
+    // Về lại màn hình chính khi dừng cuộc chơi
+    @FXML
+     public void loadGameView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/src/view/HomeView.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) gamePane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
