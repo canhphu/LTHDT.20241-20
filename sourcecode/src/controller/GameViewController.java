@@ -1,6 +1,7 @@
 package src.controller;
 
 
+import javafx.beans.property.SimpleStringProperty;
 import src.entity.Player;
 import src.entity.Square;
 import javafx.animation.*;
@@ -34,6 +35,7 @@ import java.util.concurrent.Executors;
 
 public class GameViewController {
     private boolean run = false;
+    private boolean spread = false;
     private GameController gameController;
     @FXML
     private AnchorPane gamePane; //AnchorPane cho màn chơi
@@ -54,6 +56,9 @@ public class GameViewController {
     @FXML
     private Button confirmNameButton;
     //element cho game view
+    @FXML
+    private Label label0,label1, label2, label3, label4, label5, label6, label7, label8, label9, label10, label11;
+
     @FXML
     private Text timeText;
     @FXML
@@ -201,6 +206,7 @@ public class GameViewController {
                     }
                 }
             }
+
             currentPlayerText.setText("Player 1: " + player1Name);
             namePlayer1.setText("Player1: " + gameController.getPlayer1().getName());
             namePlayer2.setText("Player2: " + gameController.getPlayer2().getName());
@@ -208,11 +214,27 @@ public class GameViewController {
         }
     }
     public void updateScoreAndBorrowGem(){
+        bindLabels();
         scorePlayer1.setText("Score: "+gameController.getPlayer1().getScore());
         scorePlayer2.setText("Score: "+ gameController.getPlayer2().getScore());
         borrowGemPlayer1.setText("Borrow gems: "+ gameController.getPlayer1().getBorrowGems());
         borrowGemPlayer2.setText("Borrow gems: "+ gameController.getPlayer2().getBorrowGems());
         currentPlayerText.setText("Lượt: Player"+gameController.getCurrentPlayer().getId()+" "+gameController.getCurrentPlayer().getName());
+    }
+    private void bindLabels(){
+        label0.setText(String.valueOf(gameController.getBoard().getSquareById(0).getScoreInSquare()));
+        label1.setText(String.valueOf(gameController.getBoard().getSquareById(1).getScoreInSquare()));
+        label2.setText(String.valueOf(gameController.getBoard().getSquareById(2).getScoreInSquare()));
+        label3.setText(String.valueOf(gameController.getBoard().getSquareById(3).getScoreInSquare()));
+        label4.setText(String.valueOf(gameController.getBoard().getSquareById(4).getScoreInSquare()));
+        label5.setText(String.valueOf(gameController.getBoard().getSquareById(5).getScoreInSquare()));
+        label6.setText(String.valueOf(gameController.getBoard().getSquareById(6).getScoreInSquare()));
+        label7.setText(String.valueOf(gameController.getBoard().getSquareById(7).getScoreInSquare()));
+        label8.setText(String.valueOf(gameController.getBoard().getSquareById(8).getScoreInSquare()));
+        label9.setText(String.valueOf(gameController.getBoard().getSquareById(9).getScoreInSquare()));
+        label10.setText(String.valueOf(gameController.getBoard().getSquareById(10).getScoreInSquare()));
+        label11.setText(String.valueOf(gameController.getBoard().getSquareById(11).getScoreInSquare()));
+
     }
     @FXML
     public void deleteAllGemImageInSquare(StackPane square){
@@ -264,7 +286,7 @@ public class GameViewController {
     }
     @FXML
     public void handleSquareClick(MouseEvent event) {
-       if(run) {
+       if(run&&!spread) {
            lastSelectedDirection = null;
 
            if (lastSelectedSquare != null) {
@@ -376,6 +398,7 @@ public class GameViewController {
     @FXML
     public void handleSpreadGemButtonClick(MouseEvent event) {
         if(run) {
+            spread = true;
             handleAfterTurn();
             Button clickedButton = (Button) event.getSource();
 
@@ -490,20 +513,11 @@ public class GameViewController {
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.millis(400), event -> {
                         if (index >= gemsToMove.size()) {
+                            bindLabels();
                             int currentIndex = targetSquareIds.getLast();
-                            int nextLastIndex = gameController.getNextSquareIndex(currentIndex, clockwise);
-                            int response = gameController.handleNextEndSquare(nextLastIndex, clockwise);
-                            if (response == 0) {
-                                int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
-                                squares.get(nextTwoLastIndex).getChildren().removeIf(node -> node instanceof ImageView);
-                                updateScoreAndBorrowGem();
-                            } else if (response == 1) {
-                                lastSelectedSquare = squares.get(nextLastIndex);
-                                spreadGem(nextLastIndex, clockwise);
-
-                            } else {
-                                updateScoreAndBorrowGem();
-                            }
+                            int count = 0;
+                            handleAfterSpreadGem(currentIndex,count);
+                            spread = false;
                             onFinished.run();
                             return; // Thoát khi đã xử lý hết các viên đá
                         }
@@ -513,7 +527,7 @@ public class GameViewController {
                         StackPane targetSquare = squares.get(targetSquareId);
 
                         // Tạo hoạt ảnh di chuyển cho viên đá
-                        TranslateTransition transition = new TranslateTransition(Duration.seconds(1), gem);
+                        TranslateTransition transition = new TranslateTransition(Duration.millis(400), gem);
 
                         // Lấy tọa độ của pickSquare và targetSquare trong hệ tọa độ của Scene
                         Bounds pickBounds = pickSquare.localToScene(pickSquare.getBoundsInLocal());
@@ -546,7 +560,29 @@ public class GameViewController {
                         if(run) transition.play(); // Bắt đầu hoạt ảnh
                     }));
             timeline.play();
+
         }
+    }
+    public void handleAfterSpreadGem(int index,int count){
+
+        int nextLastIndex = gameController.getNextSquareIndex(index, clockwise);
+        int response = gameController.handleNextEndSquare(nextLastIndex, clockwise);
+        if (response == 0) {
+            count++;
+            int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
+            squares.get(nextTwoLastIndex).getChildren().removeIf(node -> node instanceof ImageView);
+            handleAfterSpreadGem(nextTwoLastIndex,count);
+            updateScoreAndBorrowGem();
+        } else if(count==0) {
+            if (response == 1) {
+                lastSelectedSquare = squares.get(nextLastIndex);
+                spreadGem(nextLastIndex, clockwise);
+
+            } else {
+                updateScoreAndBorrowGem();
+            }
+        }
+
     }
     public void handleAfterTurn() {
         if(gameController.isGameOver())  {
