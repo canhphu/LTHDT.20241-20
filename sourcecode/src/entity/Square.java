@@ -15,7 +15,13 @@ public class Square {
     public int getSquareId() {
         return squareId;
     }
-
+    public int getScoreInSquare(){
+        int sum=0;
+        for(Gem gem:gems){
+            sum = sum + gem.getValue();
+        }
+        return sum;
+    }
     public List<Gem> getGems() {
         return gems;
     }

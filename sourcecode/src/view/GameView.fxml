@@ -40,40 +40,49 @@
             </rowConstraints>
             <!-- Hàng 1 -->
             <StackPane fx:id="square11" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label fx:id="label11"  style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
-            <StackPane fx:id="square10" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color:LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <StackPane fx:id="square10" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label fx:id="label10" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square9" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <Label fx:id="label9"  style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square8" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="3" GridPane.rowIndex="0">
-
-
+                <Label fx:id="label8" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square7" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="4" GridPane.rowIndex="0">
+                <Label fx:id="label7"  style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
 
             <!-- Hàng 2 -->
             <StackPane fx:id="square1" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label fx:id="label1" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square2" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label fx:id="label2" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square3" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <Label fx:id="label3" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square4" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                <Label fx:id="label4" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
             <StackPane fx:id="square5" minHeight="140" minWidth="140" prefHeight="140" prefWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                <Label fx:id="label5" style="-fx-text-fill: red; -fx-font-size: 80;"  />
             </StackPane>
         </GridPane>
 
         <!-- Hình bán nguyệt bên trái -->
         <StackPane fx:id="square0" layoutX="20" layoutY="244">
             <Arc fx:id="square0Arc" fill="deepskyblue" length="180" radiusX="140" radiusY="140" startAngle="90" stroke="BLACK" strokeWidth="2" />
-
+            <Label fx:id="label0" style="-fx-text-fill: red; -fx-font-size: 100;"  />
         </StackPane>
 
         <!-- Hình bán nguyệt bên phải -->
         <StackPane fx:id="square6" layoutX="862" layoutY="244">
             <Arc fx:id="square6Arc" fill="deepskyblue" length="180" radiusX="140" radiusY="140" startAngle="270" stroke="BLACK" strokeWidth="2" />
+            <Label fx:id="label6" style="-fx-text-fill: red; -fx-font-size: 100;"  />
         </StackPane>
 
         <StackPane fx:id="pickSquare" layoutX="100" layoutY="530" minHeight="140" minWidth="140" style="-fx-background-color: LightBlue; -fx-border-width: 1; -fx-border-color: black">
