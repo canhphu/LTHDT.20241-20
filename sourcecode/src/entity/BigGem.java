@@ -1,14 +1,7 @@
-package entity;
+package src.entity;
 
-public class BigGem extends Gem{
-
-    public BigGem(int value) {
-        super(value);
-    }
-    public int getValue(){
-        return this.value;
-    }
-    public void setValue(int value){
-        this.value = value;
+public class BigGem extends Gem {
+    public BigGem() {
+        super(5); // Gem quan có giá trị 5
     }
 }

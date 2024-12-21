@@ -1,14 +1,7 @@
-package entity;
+package src.entity;
 
-public class SmallGem extends Gem{
-    
-    public SmallGem(int value) {
-        super(value);
-    }
-    public int getValue(){
-        return this.value;
-    }
-    public void setValue(int value){
-        this.value = value;
+public class SmallGem extends Gem {
+    public SmallGem() {
+        super(1); // Gem dân có giá trị 1
     }
 }

@@ -1,72 +1,84 @@
-package controller;
-
-import java.io.IOException;
+package src.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import view.HomeView.HomeView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import java.io.IOException;
 
 public class HomeController {
+    Stage primaryStage = new Stage();
+    @FXML
+    private ImageView backgroundImageHome;
 
     @FXML
-    private Button Exitbtn;
+    private Button exitButton;
 
     @FXML
-    private Button Guidebtn;
+    private Button guideButton;
 
     @FXML
-    private Button Playbtn;
+    private StackPane homePane;
 
     @FXML
-    void PlaybtnClicked(MouseEvent event) throws IOException {
- 
-        Stage stage = (Stage) Playbtn.getScene().getWindow();
-        
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/screen/play.fxml"));
-        
-        double height = Playbtn.getScene().getWindow().getHeight();
-        double width = Playbtn.getScene().getWindow().getWidth();
-        
-        HomeView.setScene(stage, loader.load(), width, height);
-        stage.show();
+    private Button newGameButton;
+
+    private void startNewGame() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/src/view/GameView.fxml"));
+            Parent gameView = loader.load();
+            Stage stage = (Stage) newGameButton.getScene().getWindow();
+            stage.setScene(new Scene(gameView));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
-    void GuidebtnClicked(MouseEvent event) throws IOException {
-    	FXMLLoader loader = new FXMLLoader(getClass().getResource("/screen/rule.fxml"));
-        Parent ruleScreen = loader.load();
-        
-        double height = Guidebtn.getScene().getWindow().getHeight()-15;
-        double width = Guidebtn.getScene().getWindow().getWidth()-37;
- 
-        Scene ruleScene = new Scene(ruleScreen, width, height);
-
-        Stage stage = (Stage) Guidebtn.getScene().getWindow();
-
-        stage.setScene(ruleScene);
-        stage.show();
+    private void showGuide() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/src/view/GuideView.fxml"));
+            Parent guideView = loader.load();
+            Stage stage = (Stage) guideButton.getScene().getWindow();
+            stage.setScene(new Scene(guideView));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-   
+
+    private void exitGame() {
+        // Thoát ứng dụng hoặc quay lại màn hình chính.
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Quit");
+        alert.setHeaderText("You're about to quit");
+        alert.setContentText("Do you want this?");
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
 
     @FXML
-    void ExitbtnClicked(MouseEvent event) {
-    	 Alert alert = new Alert(AlertType.CONFIRMATION);
-         alert.setTitle("Quit");
-         alert.setHeaderText("You're about to quit");
-         alert.setContentText("Do you want this ?");
-         if (alert.showAndWait().get()== ButtonType.OK){
-         Stage stage = (Stage) Exitbtn.getScene().getWindow();
-         stage.close();
-         }
+    private void initialize() {
+        if(newGameButton!=null) {
+            // Event handler for "Game Mới"
+            newGameButton.setOnAction(event -> startNewGame());
+        }
+        if(guideButton!=null) {
+            // Event handler for "Hướng Dẫn"
+            guideButton.setOnAction(event -> showGuide());
+        }
+        if(exitButton!=null) {
+            // Event handler for "Thoát"
+            exitButton.setOnAction(event -> exitGame());
+        }
     }
-
 }
-

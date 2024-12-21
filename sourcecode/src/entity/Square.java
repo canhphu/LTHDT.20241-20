@@ -1,33 +1,35 @@
-package entity;
+package src.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Square {
-    private int squareId;
-    private List<Gem> gemsInSquare = new ArrayList<>();
+    private final int squareId; // ID của ô
+    private final List<Gem> gems; // Danh sách gem trong ô
 
     public Square(int squareId) {
         this.squareId = squareId;
+        this.gems = new ArrayList<>();
     }
 
     public int getSquareId() {
         return squareId;
     }
 
+    public List<Gem> getGems() {
+        return gems;
+    }
+
     public void addGem(Gem gem) {
-        gemsInSquare.add(gem);
+        gems.add(gem);
     }
 
-    public int getGemQuantity() {
-        return gemsInSquare.size();
+    public int getGemsQuantity() {
+        return gems.size();
     }
 
-    public void removeAllGems() {
-        gemsInSquare.clear();
-    }
-
-    public List<Gem> getGemInSquare() {
-        return gemsInSquare;
+    public void removeAllGems()
+    {
+        gems.clear();
     }
 }
