@@ -75,9 +75,7 @@ public class GameController {
     public List<Integer> spreadGems(int pickSquareId, boolean clockwise) {
 
         Square pickSquare = board.getSquareList().get(pickSquareId);
-        for(Square square : board.getSquareList()){
-            System.out.println("aaaa"+square.getGemsQuantity());
-        }
+
         List<Gem> gems = pickSquare.getGems();
         List<Integer> squareId = new ArrayList<>();
         int currentIndex = pickSquareId;
@@ -101,25 +99,16 @@ public class GameController {
     public int handleNextEndSquare(int nextEndIndex, boolean clockwise) {
         Square nextEndSquare = board.getSquareById(nextEndIndex);
         if(nextEndSquare.getGemsQuantity()!=0){
-            if(nextEndIndex%6==0)
-            {
-                switchTurn();
-                return 2;
-            }
-            else {
-                return 1;
-            }
+            if(nextEndIndex%6==0) return 2;
+            else return 1;
+
         }else{
             int nextTwoEndSquareIndex = getNextSquareIndex(nextEndIndex, clockwise);
             Square nextTwoEndSquare = board.getSquareById(nextTwoEndSquareIndex);
-            if(nextTwoEndSquare.getGemsQuantity()==0){
-                switchTurn();
-                return 2;
-            }
+            if(nextTwoEndSquare.getGemsQuantity()==0) return 2;
             else {
                 currentPlayer.increaseScore(nextTwoEndSquare.getGems());
                 nextTwoEndSquare.removeAllGems();
-               
                 return 0;
             }
         }

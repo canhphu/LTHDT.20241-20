@@ -21,7 +21,12 @@ public class Board {
                 squareList.get(i).addGem(new BigGem());    // 1 gem quan cho mỗi ô quan (0, 6)
             }
             else{
-                for(int j=0;j<5;j++) {
+                if(i==1)
+                for(int j=0;j<1;j++) {
+                    squareList.get(i).addGem(new SmallGem());
+                }
+                else if(i%2==0)
+                    for(int j=0;j<5;j++) {
                     squareList.get(i).addGem(new SmallGem());
                 }
             }

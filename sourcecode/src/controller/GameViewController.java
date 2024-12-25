@@ -173,7 +173,11 @@ public class GameViewController {
         gamePane.setManaged(true);
     }
 
-
+    @FXML
+    private void replayGame(){
+        run =true;
+        initGameView();
+    }
     //Controller cho PlayView
     @FXML
       public void initGameView(){
@@ -304,10 +308,7 @@ public class GameViewController {
                lastSelectedSquare = squareNames[row][column];
                String partAfterSquare = lastSelectedSquare.getId().substring("square".length()); // Lấy phần sau "square"
                Square square = gameController.getBoard().getSquareById(Integer.parseInt(partAfterSquare));
-               System.out.println(square.getSquareId());
-               for (int i = 0; i < gameController.getCurrentPlayer().getPlayerSquares().size(); i++) {
-                   System.out.println("a" + gameController.getCurrentPlayer().getPlayerSquares().get(i).getSquareId());
-               }
+
                if (square.getGemsQuantity() == 0 || !gameController.getCurrentPlayer().getPlayerSquares().contains(square)) {
                    rightButton.setVisible(false);
                    rightButton.setManaged(false);
@@ -426,7 +427,6 @@ public class GameViewController {
                      List<Integer> spreadSquareId;
                      spreadSquareId = gameController.spreadGems(pickSquareId, clockwise);
                      spreadGemsAnimation(spreadSquareId, () -> {
-                         handleAfterTurn();
                          if (lastSelectedSquare != null)
                              resetSquareColor(lastSelectedSquare);
                          if (lastSelectedDirection != null)
@@ -494,17 +494,17 @@ public class GameViewController {
         for (var child : pickSquare.getChildren()) {
             if (child instanceof ImageView) {
                 ImageView imageView = (ImageView) child;
-
                 gemsToMove.add(imageView);
+
             }
         }
-        // Gọi hàm đệ quy để xử lý từng viên đá với độ trễ
-        moveGemsRecursively(gemsToMove, targetSquareIds, 0, onFinished);
+
+        moveGemsRecursively(pickSquare,gemsToMove, targetSquareIds, 0, onFinished);
 
     }
     }
 
-    private void moveGemsRecursively(List<ImageView> gemsToMove, List<Integer> targetSquareIds, int index, Runnable onFinished) {
+    private void moveGemsRecursively(StackPane square,List<ImageView> gemsToMove, List<Integer> targetSquareIds, int index, Runnable onFinished) {
 
         if(run) {
             Timeline timeline = new Timeline(
@@ -513,6 +513,7 @@ public class GameViewController {
                             bindLabels();
                             int currentIndex = targetSquareIds.getLast();
                             int count = 0;
+                            square.getChildren().removeIf(node -> node instanceof ImageView);
                             handleAfterSpreadGem(currentIndex,count);
                             spread = false;
                             onFinished.run();
@@ -551,7 +552,7 @@ public class GameViewController {
                             }
                             // Dừng 2 giây trước khi thực hiện lần lặp tiếp theo
                             PauseTransition pause = new PauseTransition(Duration.seconds(0.6));
-                            pause.setOnFinished(e -> moveGemsRecursively(gemsToMove, targetSquareIds, index + 1, onFinished));
+                            pause.setOnFinished(e -> moveGemsRecursively(square,gemsToMove, targetSquareIds, index + 1, onFinished));
                             pause.play();
                         });
                         if(run) transition.play(); // Bắt đầu hoạt ảnh
@@ -560,23 +561,33 @@ public class GameViewController {
 
         }
     }
-    public void handleAfterSpreadGem(int index,int count){
+    public void handleAfterSpreadGem(int index,int count) {
 
         int nextLastIndex = gameController.getNextSquareIndex(index, clockwise);
         int response = gameController.handleNextEndSquare(nextLastIndex, clockwise);
+        System.out.println("bbb" + count);
+
         if (response == 0) {
             count++;
             int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
             squares.get(nextTwoLastIndex).getChildren().removeIf(node -> node instanceof ImageView);
-            handleAfterSpreadGem(nextTwoLastIndex,count);
-            gameController.switchTurn();
-            updateScoreAndBorrowGem();
-        } else if(count==0) {
-            if (response == 1) {
-                lastSelectedSquare = squares.get(nextLastIndex);
-                spreadGem(nextLastIndex, clockwise);
+            handleAfterSpreadGem(nextTwoLastIndex, count);
+        } else {
+            if (count == 0) {
+                if (response == 1) {
+                    lastSelectedSquare = squares.get(nextLastIndex);
+                    spreadGem(nextLastIndex, clockwise);
+                    updateScoreAndBorrowGem();
+                } else {
 
+                    gameController.switchTurn();
+                    handleAfterTurn();
+
+                    updateScoreAndBorrowGem();
+                }
             } else {
+                gameController.switchTurn();
+                handleAfterTurn();
                 updateScoreAndBorrowGem();
             }
         }
@@ -587,16 +598,17 @@ public class GameViewController {
             endText.setText("2 ô quan đã trống! Trò chơi kết thúc!\n Kết quả:\n");
             endGame();
         }
-        switch (gameController.handleRefillGems()){
-            case 2:
-                endText.setText("Đối phương không đủ đá cho mượn! Trò chơi kết thúc!\n Kết quả:\n ");
-                endGame();
-                break;
-            case 1:
-                refillGems(gameController.getCurrentPlayer());
-                break;
+        else {
+            switch (gameController.handleRefillGems()) {
+                case 2:
+                    endText.setText("Đối phương không đủ đá cho mượn! Trò chơi kết thúc!\n Kết quả:\n ");
+                    endGame();
+                    break;
+                case 1:
+                    refillGems(gameController.getCurrentPlayer());
+                    break;
+            }
         }
-
     }
 
     @FXML
