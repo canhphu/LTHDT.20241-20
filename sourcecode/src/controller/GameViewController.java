@@ -34,8 +34,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GameViewController {
-    private boolean run = false;
-    private boolean spread = false;
+    private boolean run = false; 
+    private boolean spread = false; 
     private GameController gameController;
     @FXML
     private AnchorPane gamePane; //AnchorPane cho màn chơi
@@ -45,9 +45,6 @@ public class GameViewController {
     private StackPane menuGamePane;
     @FXML
     private StackPane endGamePane; // màn end Game
-    //element cho home view
-    @FXML
-    private Button newGameButton;
     //element cho insert name view
     @FXML
     private TextField player1TextField;
@@ -332,7 +329,7 @@ public class GameViewController {
        }
     }
 
-    private void highlightSquare(StackPane square) {
+    private void highlightSquare(StackPane square) { 
         String id = square.getId();
         switch (id){
             case "square0":
@@ -364,7 +361,7 @@ public class GameViewController {
     }
 
     @FXML
-    public void handleButtonDirectionClick(MouseEvent event) {
+    public void handleButtonDirectionClick(MouseEvent event) { 
         if(run) {
             // Determine which button is clicked
             Button clickedButton = (Button) event.getSource();
@@ -385,7 +382,7 @@ public class GameViewController {
         }
     }
 
-    private void highlightButton(Button button) {
+    private void highlightButton(Button button) { 
         // Set the color of the selected button to yellow
         button.setStyle("-fx-background-color: yellow;");
     }
@@ -634,7 +631,7 @@ public class GameViewController {
         gamePane.setVisible(false);
         menuGamePane.setVisible(false);
         menuGamePane.setManaged(false);
-        loadGameView();
+        loadHomeView();
         run = false;
     }
     ////////
@@ -660,17 +657,17 @@ public class GameViewController {
         run =false;
    }
    @FXML
-    public void exitEndGame(){
+    public void exitEndGame(){ 
         gamePane.setVisible(false);
         gamePane.setManaged(false);
         endGamePane.setVisible(false);
         endGamePane.setManaged(false);
-        loadGameView();
+        loadHomeView();
         run=false;
     }
     // Về lại màn hình chính khi dừng cuộc chơi
     @FXML
-     public void loadGameView() {
+     public void loadHomeView() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/src/view/HomeView.fxml"));
             Parent root = loader.load();

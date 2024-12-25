@@ -14,7 +14,6 @@ import javafx.scene.Scene;
 import java.io.IOException;
 
 public class HomeController {
-    Stage primaryStage = new Stage();
     @FXML
     private ImageView backgroundImageHome;
 
@@ -30,7 +29,7 @@ public class HomeController {
     @FXML
     private Button newGameButton;
 
-    private void startNewGame() {
+    private void startNewGame() { 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/src/view/GameView.fxml"));
             Parent gameView = loader.load();
