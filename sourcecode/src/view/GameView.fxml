@@ -177,7 +177,7 @@
             <Label fx:id="player1ScoreLabel" style="-fx-font-size: 20px;" />
             <Label fx:id="player2ScoreLabel" style="-fx-font-size: 20px;" />
 
-            <Button fx:id="replayButton" onMouseReleased="#initGameView" style="-fx-font-size: 16px;" text="Chơi Lại" />
+            <Button fx:id="replayButton" onMouseReleased="#replayGame" style="-fx-font-size: 16px;" text="Chơi Lại" />
             <Button fx:id="exitEndGameButton" onMouseReleased="#exitEndGame" style="-fx-font-size: 16px;" text="Thoát" />
         </VBox>
     </StackPane>
