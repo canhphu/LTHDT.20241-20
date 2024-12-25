@@ -27,7 +27,7 @@ public class Board {
                     squareList.get(i).addGem(new SmallGem());
       
             }
-
+        }
         }
     }
 
