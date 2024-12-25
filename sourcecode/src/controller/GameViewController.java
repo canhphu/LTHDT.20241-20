@@ -569,6 +569,7 @@ public class GameViewController {
             int nextTwoLastIndex = gameController.getNextSquareIndex(nextLastIndex, clockwise);
             squares.get(nextTwoLastIndex).getChildren().removeIf(node -> node instanceof ImageView);
             handleAfterSpreadGem(nextTwoLastIndex,count);
+            gameController.switchTurn();
             updateScoreAndBorrowGem();
         } else if(count==0) {
             if (response == 1) {

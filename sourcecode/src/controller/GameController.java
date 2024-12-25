@@ -119,7 +119,7 @@ public class GameController {
             else {
                 currentPlayer.increaseScore(nextTwoEndSquare.getGems());
                 nextTwoEndSquare.removeAllGems();
-                switchTurn();
+               
                 return 0;
             }
         }
