@@ -9,3 +9,6 @@ Nhóm 20 thuộc môn Lập trình hướng đối tượng
 - **Lê Đồng Cảnh Phú** - 20225755
 - **Trần Cao Bảo Phúc** - 20225756
 - **Đỗ Hồng Quân** - 20194650
+
+## Link Demo Video
+https://drive.google.com/file/d/1a3PxBQ4DRBYYJk0yqrXykvrSaRvkmhAP/view?usp=sharing
