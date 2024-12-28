@@ -12,3 +12,6 @@ Nhóm 20 thuộc môn Lập trình hướng đối tượng
 
 ## Link Demo Video
 https://drive.google.com/file/d/1a3PxBQ4DRBYYJk0yqrXykvrSaRvkmhAP/view?usp=sharing
+
+## Link Presentation Video
+https://drive.google.com/file/d/1Zf4V_TQmFPq_n9jArxpgk-C0mj9jQsls/view?usp=sharing
